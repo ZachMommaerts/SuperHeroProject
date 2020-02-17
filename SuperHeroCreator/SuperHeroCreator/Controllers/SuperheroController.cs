@@ -4,11 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SuperHeroCreator.Data;
+using SuperHeroCreator.Models;
 
 namespace SuperHeroCreator.Controllers
 {
     public class SuperheroController : Controller
     {
+        readonly ApplicationDbContext _context;
+
+        public SuperheroController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: Superhero
         public ActionResult Index()
         {
@@ -24,18 +33,19 @@ namespace SuperHeroCreator.Controllers
         // GET: Superhero/Create
         public ActionResult Create()
         {
-            return View();
+            Superhero superhero = new Superhero();
+            return View(superhero);
         }
 
         // POST: Superhero/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Superhero superhero)
         {
             try
             {
-                // TODO: Add insert logic here
-
+                _context.Superheroes.Add(superhero);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch
