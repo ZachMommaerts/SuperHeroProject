@@ -21,12 +21,13 @@ namespace SuperHeroCreator.Controllers
         // GET: Superhero
         public ActionResult Index()
         {
-            return View();
+            return View(_context.Superheroes.ToList());
         }
 
         // GET: Superhero/Details/5
         public ActionResult Details(int id)
         {
+            var heroDetail = _context.Superheroes.Where(s => s.Id == id).FirstOrDefault();
             return View();
         }
 
@@ -40,7 +41,7 @@ namespace SuperHeroCreator.Controllers
         // POST: Superhero/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Superhero superhero)
+        public ActionResult Create([Bind("Id,Name,AlterEgo,PrimaryAbility,SecondaryAbility,Catchphrase")] Superhero superhero)
         {
             try
             {
@@ -57,18 +58,24 @@ namespace SuperHeroCreator.Controllers
         // GET: Superhero/Edit/5
         public ActionResult Edit(int id)
         {
+            var superheroToEdit = _context.Superheroes.Find(id);
             return View();
         }
 
         // POST: Superhero/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Superhero superhero)
         {
             try
             {
-                // TODO: Add update logic here
-
+                var superheroToEdit = _context.Superheroes.Where(s => s.Id == superhero.Id).FirstOrDefault();
+                superheroToEdit.Name = superhero.Name;
+                superheroToEdit.AlterEgo = superhero.AlterEgo;
+                superheroToEdit.PrimaryAbility = superhero.PrimaryAbility;
+                superheroToEdit.PrimaryAbility = superhero.SecondaryAbility;
+                superheroToEdit.Catchphrase = superhero.Catchphrase;
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -78,7 +85,7 @@ namespace SuperHeroCreator.Controllers
         }
 
         // GET: Superhero/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, Superhero superhero)
         {
             return View();
         }
@@ -86,12 +93,13 @@ namespace SuperHeroCreator.Controllers
         // POST: Superhero/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                var deletedHero = _context.Superheroes.Where(s => s.Id == id).FirstOrDefault();
+                _context.Superheroes.Remove(deletedHero);
+                _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch
